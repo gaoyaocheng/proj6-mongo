@@ -12,10 +12,12 @@
 
   <!-- Bootstrap includes javascript and css  (must follow jquery) -->
   <link rel="stylesheet"
-   href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+   href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
    <script
-    src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js">
+    src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js">
 </script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+
 
    <!-- Our own style sheet -->
    <link rel="stylesheet" href="/static/css/memos.css" />
@@ -43,6 +45,7 @@
   <div class="memo">
   <div class="row">
   <div class="col-md-2">
+  <input name = "choose" type="checkbox">
     {{ memo.date | humanize }}
   </div>
   <div class="col-md-10">
@@ -55,7 +58,48 @@
   <p>No memos for you. </p>  
 {% endif %}
 
- 
+<div style="left:500pt">
+    <input type="button" style = "width:120px;height:50 background-color:#66CCFF"  id = "delete" value = "delete selected"/>
+    <input type="button" style = "width:120px;height:50 background-color:#66CCFF"  id = "newmemo" value = "newmemo"/>
+</div>
+
+   <script type="text/javascript">
+   $(document).ready(function(){
+   $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+
+       $('input[name="choose"]').change(
+           function(){
+               var check = $(this).prop('checked'); 
+               var index = $(this).parents(".memo").index();
+               $.getJSON($SCRIPT_ROOT + '/_choose',
+                   {che: check, idx: index},
+                   function() {
+                   }
+               );
+           }
+       );
+   })
+       $("#delete").click(
+           function(){
+               $.getJSON($SCRIPT_ROOT + '/_delete',
+                   {val: 0},
+                   function(data) {
+                       res = data.result
+                       if (res) {
+                            window.location.href = '/index'
+                       } else {
+                            alert('Plesae select then delete!');
+                       }
+                   }
+               );
+           }
+       )
+       $("#newmemo").click(
+           function(){
+             window.location.href = '/new'
+           }
+       )
+   </script>
 
 </div> <!-- container -->
 </body>
