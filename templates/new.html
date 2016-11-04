@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html> <head>
+        <title>New Memo</title>
+
+        <!-- 'viewport' is used by bootstrap to respond to device size -->
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- Javascript:  JQuery from a content distribution network (CDN) -->
+        <script
+            src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js">
+        </script>
+
+        <!-- Bootstrap includes javascript and css  (must follow jquery) -->
+        <link rel="stylesheet"
+        href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <script
+            src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js">
+        </script>
+
+        <!-- Our own style sheet -->
+        <link rel="stylesheet" href="/static/css/memos.css" />
+        <meta charset="utf-8">
+
+        <link rel="stylesheet" href="//apps.bdimg.com/libs/jqueryui/1.10.4/css/jquery-ui.min.css">
+        <script src="//apps.bdimg.com/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script src="//apps.bdimg.com/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+        <script>
+            $(function() {
+                $("#datepicker").datepicker();
+            });
+        </script>
+
+    </head>
+    <body>
+        <div class="container">
+            <p>Date:<input type="text" id = "datepicker"></p>
+
+            <input type="text" style= "width:300;height:300" id = "memocontext">
+
+            <div style="top:500pt">
+
+                <input type="button" style = "width:70px;height:50 background-color:#66CCFF"  id = "save" value = "save"/>
+                <input type="button" style = "width:70px;height:50 background-color:#66CCFF" id = "cancel" value = "cancel"/>
+             </div>
+
+   <script type="text/javascript">
+   $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+   $(document).ready(function(){
+
+       $("#datepicker").change(
+           function(){
+               var date = $(this).val();
+               $.getJSON($SCRIPT_ROOT + '/_datetime',
+                   {time: date},
+                   function(data) {
+                       res = data.result
+                   }
+               );
+           }
+       )
+       $("#memocontext").change(
+           function(){
+               var data = $(this).val();
+               if (data.length == 0) {
+                    alert('input should not blank!');
+                    return
+               }
+
+               $.getJSON($SCRIPT_ROOT + '/_memocontext',
+                   {context: data},
+                   function(data) {
+                       res = data.result
+                   }
+               );
+           }
+       )
+       $("#save").click(
+           function(){
+               $.getJSON($SCRIPT_ROOT + '/_save',
+                   {val: 0},
+                   function(data) {
+                       res = data.result
+                       if (res) {
+                            window.location.href = '/index'
+                       } else {
+                            alert('Plesae input date or memo context!');
+                       }
+                   }
+               );
+           }
+       )
+       $("#cancel").click(
+           function(){
+               $.getJSON($SCRIPT_ROOT + '/_cancel',
+                   {val: 0},
+                   function(data) {
+                       res = data.result
+                       window.location.href = '/index'
+                   }
+               );
+           }
+       )
+   })
+    </script>
+
+        </div> <!-- container -->
+    </body>
+</html>
